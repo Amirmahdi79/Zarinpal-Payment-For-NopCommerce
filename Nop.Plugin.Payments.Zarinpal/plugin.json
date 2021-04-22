@@ -4,7 +4,7 @@
   "SystemName": "Payments.Zarinpal",
   "Version": "1.0",
   "SupportedVersions": [ "4.40" ],
-  "Author": "nopShop team",
+  "Author": "Amirmahdi Alijani",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Payments.Zarinpal.dll",
   "Description": "This plugin allows paying with Zarinpal"

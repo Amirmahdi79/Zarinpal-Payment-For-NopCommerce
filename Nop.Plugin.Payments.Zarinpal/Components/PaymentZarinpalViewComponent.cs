@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Nop.Web.Framework.Components;
 
 namespace Nop.Plugin.Payments.Zarinpal
@@ -6,9 +7,9 @@ namespace Nop.Plugin.Payments.Zarinpal
     [ViewComponent(Name = "PaymentZarinpal")]
     public class PaymentZarinpalViewComponent : NopViewComponent
     {
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View("~/Plugins/Payments.Zarinpal/Views/PaymentInfo.cshtml");
+            return await Task.FromResult(View("~/Plugins/Payments.Zarinpal/Views/PaymentInfo.cshtml"));
         }
     }
 }

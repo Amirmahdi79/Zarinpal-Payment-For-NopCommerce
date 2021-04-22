@@ -2,8 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
-//using NopTop.Plugin.Payments.Zarinpal.Services;
-using Nop.Web.Framework.Infrastructure.Extensions;
+//using Nop.Plugin.Payments.Zarinpal.Services;
 
 namespace Nop.Plugin.Payments.Zarinpal.Infrastructure
 {
@@ -20,7 +19,7 @@ namespace Nop.Plugin.Payments.Zarinpal.Infrastructure
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             //client to request PayPal services
-           // services.AddHttpClient<ZarinpalHttpClient>().WithProxy();
+            // services.AddHttpClient<ZarinpalHttpClient>().WithProxy();
         }
 
         /// <summary>

@@ -27,19 +27,20 @@ namespace Nop.Plugin.Payments.Controllers
     public class PaymentZarinPalController : BasePaymentController
     {
         #region Fields
-        private readonly IPaymentService _paymentService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly IOrderProcessingService _orderProcessingService;
-        private readonly IOrderService _orderService;
-        private readonly IPaymentPluginManager _paymentPluginManager;
-        private readonly IPermissionService _permissionService;
-        private readonly ILocalizationService _localizationService;
+
         private readonly ILogger _logger;
-        private readonly INotificationService _notificationService;
-        private readonly ISettingService _settingService;
-        private readonly IStoreContext _storeContext;
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
+        private readonly IOrderService _orderService;
+        private readonly IStoreContext _storeContext;
+        private readonly IPaymentService _paymentService;
+        private readonly ISettingService _settingService;
+        private readonly IPermissionService _permissionService;
+        private readonly ILocalizationService _localizationService;
+        private readonly INotificationService _notificationService;
+        private readonly IPaymentPluginManager _paymentPluginManager;
+        private readonly IOrderProcessingService _orderProcessingService;
+        private readonly IGenericAttributeService _genericAttributeService;
         private readonly ShoppingCartSettings _shoppingCartSettings;
         private readonly ZarinpalPaymentSettings _zarinPalPaymentSettings;
 
@@ -99,25 +100,25 @@ namespace Nop.Plugin.Payments.Controllers
 
             var model = new ConfigurationModel
             {
+                Method = zarinPalPaymentSettings.Method,
                 UseSandbox = zarinPalPaymentSettings.UseSandbox,
                 MerchantID = zarinPalPaymentSettings.MerchantID,
-                BlockOverseas = zarinPalPaymentSettings.BlockOverseas,
                 RialToToman = zarinPalPaymentSettings.RialToToman,
-                Method = zarinPalPaymentSettings.Method,
                 UseZarinGate = zarinPalPaymentSettings.UseZarinGate,
+                BlockOverseas = zarinPalPaymentSettings.BlockOverseas,
                 ZarinGateType = zarinPalPaymentSettings.ZarinGateType
             };
 
             if (storeScope <= 0)
                 return View("~/Plugins/Payments.Zarinpal/Views/Configure.cshtml", model);
 
+            model.Method_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.Method, storeScope);
             model.UseSandbox_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.UseSandbox, storeScope);
             model.MerchantID_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.MerchantID, storeScope);
-            model.BlockOverseas_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.BlockOverseas, storeScope);
             model.RialToToman_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.RialToToman, storeScope);
-            model.Method_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.Method, storeScope);
             model.UseZarinGate_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.UseZarinGate, storeScope);
             model.ZarinGateType_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.ZarinGateType, storeScope);
+            model.BlockOverseas_OverrideForStore = await _settingService.SettingExistsAsync(zarinPalPaymentSettings, x => x.BlockOverseas, storeScope);
 
             return View("~/Plugins/Payments.Zarinpal/Views/Configure.cshtml", model);
         }
@@ -125,7 +126,6 @@ namespace Nop.Plugin.Payments.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
-        //[AdminAntiForgery]
         [Area(AreaNames.Admin)]
         public async Task<IActionResult> Configure(ConfigurationModel model)
         {
@@ -140,22 +140,22 @@ namespace Nop.Plugin.Payments.Controllers
             var zarinPalPaymentSettings = await _settingService.LoadSettingAsync<ZarinpalPaymentSettings>(storeScope);
 
             //save settings
+            zarinPalPaymentSettings.Method = model.Method;
             zarinPalPaymentSettings.UseSandbox = model.UseSandbox;
             zarinPalPaymentSettings.MerchantID = model.MerchantID;
-            zarinPalPaymentSettings.BlockOverseas = model.BlockOverseas;
             zarinPalPaymentSettings.RialToToman = model.RialToToman;
-            zarinPalPaymentSettings.Method = model.Method;
             zarinPalPaymentSettings.UseZarinGate = model.UseZarinGate;
+            zarinPalPaymentSettings.BlockOverseas = model.BlockOverseas;
             zarinPalPaymentSettings.ZarinGateType = model.ZarinGateType;
 
             /* We do not clear cache after each setting update.
              * This behavior can increase performance because cached settings will not be cleared 
              * and loaded from database after each update */
+            await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.Method, model.Method_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.UseSandbox, model.UseSandbox_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.MerchantID, model.MerchantID_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.BlockOverseas, model.MerchantID_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.RialToToman, model.RialToToman_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.Method, model.Method_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.BlockOverseas, model.MerchantID_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.UseZarinGate, model.UseZarinGate_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(zarinPalPaymentSettings, x => x.ZarinGateType, model.ZarinGateType_OverrideForStore, storeScope, false);
 
@@ -168,19 +168,14 @@ namespace Nop.Plugin.Payments.Controllers
             return await Configure();
         }
 
-        #endregion
-
         public async Task<ActionResult> ResultHandler(string status, string authority, string oGUID)
         {
             if (!(await _paymentPluginManager.LoadPluginBySystemNameAsync("Payments.Zarinpal") is ZarinPalPaymentProcessor processor) || !_paymentPluginManager.IsPluginActive(processor))
                 throw new NopException("ZarinPal module cannot be loaded");
 
             var orderNumberGuid = Guid.Empty;
-            try
-            {
-                orderNumberGuid = new Guid(oGUID);
-            }
-            catch { }
+            orderNumberGuid = new Guid(oGUID);
+
 
             var order = await _orderService.GetOrderByGuidAsync(orderNumberGuid);
             var total = Convert.ToInt32(Math.Round(order.OrderTotal, 2));
@@ -269,6 +264,7 @@ namespace Nop.Plugin.Payments.Controllers
                     return RedirectToRoute("CheckoutCompleted", new { orderId = order.Id });
                 }
             }
+
             return RedirectToRoute("orderdetails", new { orderId = order.Id });
         }
 
@@ -281,5 +277,8 @@ namespace Nop.Plugin.Payments.Controllers
             ViewBag.Err = string.Concat("خطا : ", error);
             return View("~/Plugins/Payments.Zarinpal/Views/ErrorHandler.cshtml");
         }
+
+        #endregion
+
     }
 }

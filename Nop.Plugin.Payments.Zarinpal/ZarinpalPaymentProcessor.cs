@@ -39,26 +39,26 @@ namespace Nop.Plugin.Payments.Zarinpal
         #endregion
 
         #region Fields
-        private readonly CustomerSettings _customerSettings;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IPaymentService _paymentService;
-        private readonly CurrencySettings _currencySettings;
-        private readonly ICheckoutAttributeParser _checkoutAttributeParser;
-        private readonly ICurrencyService _currencyService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly ILocalizationService _localizationService;
-        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
-        private readonly ISettingService _settingService;
-        private readonly ITaxService _taxService;
-        private readonly IWebHelper _webHelper;
-        private readonly ZarinpalPaymentSettings _zarinPalPaymentSettings;
-        private readonly ILanguageService _languageService;
-        private readonly IStoreService _storeService;
-        private readonly ICustomerService _customerService;
+
         private IWorkContext _workContext;
+        private readonly IWebHelper _webHelper;
+        private readonly ITaxService _taxService;
+        private readonly IStoreService _storeService;
         private readonly IStoreContext _storeContext;
         private readonly IAddressService _addressService;
-
+        private readonly IPaymentService _paymentService;
+        private readonly ISettingService _settingService;
+        private readonly ILanguageService _languageService;
+        private readonly ICustomerService _customerService;
+        private readonly ICurrencyService _currencyService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILocalizationService _localizationService;
+        private readonly ICheckoutAttributeParser _checkoutAttributeParser;
+        private readonly IGenericAttributeService _genericAttributeService;
+        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly CurrencySettings _currencySettings;
+        private readonly CustomerSettings _customerSettings;
+        private readonly ZarinpalPaymentSettings _zarinPalPaymentSettings;
 
         #endregion
 
@@ -87,25 +87,25 @@ namespace Nop.Plugin.Payments.Zarinpal
             ZarinpalPaymentSettings zarinPalPaymentSettings
         )
         {
-            _paymentService = paymentService;
-            _httpContextAccessor = httpContextAccessor;
-            _workContext = workContext;
-            _customerService = customerService;
-            _storeService = storeService;
-            _currencySettings = currencySettings;
-            _checkoutAttributeParser = checkoutAttributeParser;
-            _currencyService = currencyService;
-            _genericAttributeService = genericAttributeService;
-            _localizationService = localizationService;
-            _orderTotalCalculationService = orderTotalCalculationService;
-            _settingService = settingService;
-            _taxService = taxService;
             _webHelper = webHelper;
-            _zarinPalPaymentSettings = zarinPalPaymentSettings;
+            _taxService = taxService;
+            _workContext = workContext;
+            _storeService = storeService;
             _storeContext = storeContext;
-            _languageService = languageService;
-            _customerSettings = customerSettings;
             _addressService = addressService;
+            _paymentService = paymentService;
+            _settingService = settingService;
+            _customerService = customerService;
+            _languageService = languageService;
+            _currencyService = currencyService;
+            _currencySettings = currencySettings;
+            _customerSettings = customerSettings;
+            _httpContextAccessor = httpContextAccessor;
+            _localizationService = localizationService;
+            _checkoutAttributeParser = checkoutAttributeParser;
+            _genericAttributeService = genericAttributeService;
+            _zarinPalPaymentSettings = zarinPalPaymentSettings;
+            _orderTotalCalculationService = orderTotalCalculationService;
         }
 
         #endregion
@@ -114,18 +114,16 @@ namespace Nop.Plugin.Payments.Zarinpal
 
         public override async Task InstallAsync()
         {
-            //Logic during installation goes here...
-
             //settings
             var settings = new ZarinpalPaymentSettings
             {
                 UseSandbox = true,
-                MerchantID = "99999999-9999-9999-9999-999999999999",
-                BlockOverseas = false,
                 RialToToman = true,
-                Method = EnumMethod.REST,
                 UseZarinGate = false,
-                ZarinGateType = EnumZarinGate.ZarinGate
+                BlockOverseas = false,
+                Method = EnumMethod.REST,
+                ZarinGateType = EnumZarinGate.ZarinGate,
+                MerchantID = "99999999-9999-9999-9999-999999999999",
             };
             await _settingService.SaveSettingAsync(settings);
 
@@ -183,21 +181,16 @@ namespace Nop.Plugin.Payments.Zarinpal
 
         public override async Task UninstallAsync()
         {
-            //Logic during uninstallation goes here...
-
             //settings
             await _settingService.DeleteSettingAsync<ZarinpalPaymentSettings>();
 
             //locales
-
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.Zarinpal.Fields.ZarinGate.Use");
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.Zarinpal.Fields.ZarinGate.Type");
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.Zarinpal.Fields.ZarinGate.Instructions");
-
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.ZarinPal.Fields.Method");
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.ZarinPal.Fields.Method.SOAP");
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.ZarinPal.Fields.Method.REST");
-
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.ZarinPal.Fields.UseSandbox");
             await _localizationService.DeleteLocaleResourceAsync("Plugins.Payments.ZarinPal.Fields.MerchantID");
             await _localizationService.DeleteLocaleResourceAsync("plugins.payments.zarinpal.PaymentMethodDescription");
@@ -265,6 +258,11 @@ namespace Nop.Plugin.Payments.Zarinpal
             return Task.FromResult(true);
         }
 
+        public async Task<string> GetPaymentMethodDescriptionAsync()
+        {
+            return await Task.FromResult("درگاه پرداخت زرین پال");
+        }
+
         public Task<IList<string>> ValidatePaymentFormAsync(IFormCollection form)
         {
             return Task.FromResult((IList<string>)new List<string>());
@@ -285,30 +283,9 @@ namespace Nop.Plugin.Payments.Zarinpal
             return Task.FromResult(new ProcessPaymentRequest());
         }
 
-        public Task<VoidPaymentResult> VoidAsync(VoidPaymentRequest voidPaymentRequest)
-        {
-            var result = new VoidPaymentResult();
-            result.AddError("Void method not supported");
-            return Task.FromResult(result);
-        }
-
         public Task<decimal> GetAdditionalHandlingFeeAsync(IList<ShoppingCartItem> cart)
         {
             return Task.FromResult(decimal.Zero);
-        }
-
-        public Task<RefundPaymentResult> RefundAsync(RefundPaymentRequest refundPaymentRequest)
-        {
-            var result = new RefundPaymentResult();
-            result.AddError("Refund method not supported");
-            return Task.FromResult(result);
-        }
-
-        public Task<CapturePaymentResult> CaptureAsync(CapturePaymentRequest capturePaymentRequest)
-        {
-            var result = new CapturePaymentResult();
-            result.AddError("Capture method not supported");
-            return Task.FromResult(result);
         }
 
         public async Task PostProcessPaymentAsync(PostProcessPaymentRequest postProcessPaymentRequest)
@@ -426,6 +403,31 @@ namespace Nop.Plugin.Payments.Zarinpal
             return await Task.FromResult(result);
         }
 
+        #endregion
+
+        #region Methods (Not Supported in Zarinpal)
+
+        public Task<VoidPaymentResult> VoidAsync(VoidPaymentRequest voidPaymentRequest)
+        {
+            var result = new VoidPaymentResult();
+            result.AddError("Void method not supported");
+            return Task.FromResult(result);
+        }
+
+        public Task<RefundPaymentResult> RefundAsync(RefundPaymentRequest refundPaymentRequest)
+        {
+            var result = new RefundPaymentResult();
+            result.AddError("Refund method not supported");
+            return Task.FromResult(result);
+        }
+
+        public Task<CapturePaymentResult> CaptureAsync(CapturePaymentRequest capturePaymentRequest)
+        {
+            var result = new CapturePaymentResult();
+            result.AddError("Capture method not supported");
+            return Task.FromResult(result);
+        }
+
         public Task<ProcessPaymentResult> ProcessRecurringPaymentAsync(ProcessPaymentRequest processPaymentRequest)
         {
             var result = new ProcessPaymentResult();
@@ -439,7 +441,6 @@ namespace Nop.Plugin.Payments.Zarinpal
             result.AddError("Recurring payment not supported");
             return Task.FromResult(result);
         }
-
 
         #endregion
 
@@ -512,14 +513,5 @@ namespace Nop.Plugin.Payments.Zarinpal
         }
 
         #endregion
-
-
-        public Task<string> GetPaymentMethodDescriptionAsync()
-        {
-            return Task.FromResult("sadasdasdsadasdasdasdasdasd");
-        }
-
-
-
     }
 }

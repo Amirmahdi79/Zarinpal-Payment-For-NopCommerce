@@ -3,7 +3,6 @@ C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Paym
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Payments.Zarinpal\obj\Debug\net5.0\Nop.Plugin.Payments.Zarinpal.AssemblyInfoInputs.cache
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Payments.Zarinpal\obj\Debug\net5.0\Nop.Plugin.Payments.Zarinpal.AssemblyInfo.cs
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Payments.Zarinpal\obj\Debug\net5.0\Nop.Plugin.Payments.Zarinpal.csproj.CoreCompileInputs.cache
-C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Presentation\Nop.Web\Plugins\Payments.Zarinpal\logo.jpg
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Presentation\Nop.Web\Plugins\Payments.Zarinpal\plugin.json
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Presentation\Nop.Web\Plugins\Payments.Zarinpal\Views\Configure.cshtml
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Presentation\Nop.Web\Plugins\Payments.Zarinpal\Views\ErrorHandler.cshtml
@@ -300,3 +299,4 @@ C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Paym
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Payments.Zarinpal\obj\Debug\net5.0\Nop.Plugin.Payments.Zarinpal.dll
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Payments.Zarinpal\obj\Debug\net5.0\ref\Nop.Plugin.Payments.Zarinpal.dll
 C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Nop.Plugin.Payments.Zarinpal\obj\Debug\net5.0\Nop.Plugin.Payments.Zarinpal.pdb
+C:\Users\Amir\Downloads\Compressed\nopCommerce_4.40.3_Source\src\Presentation\Nop.Web\Plugins\Payments.Zarinpal\logo.jpg

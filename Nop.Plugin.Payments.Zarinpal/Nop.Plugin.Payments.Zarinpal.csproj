@@ -18,7 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="logo.jpg" />
     <None Remove="plugin.json" />
     <None Remove="Views\Configure.cshtml" />
     <None Remove="Views\PaymentInfo.cshtml" />
